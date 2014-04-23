@@ -36,12 +36,16 @@ var csvjson = {};
 	 * @required csvdata {string} The CSV data, formatted as a string.
 	 * @param args.delim {string} The delimiter used to seperate CSV
 	 * 	items. Defauts to ','.
+     * @param args.emptyValue {number} The number to use when empty item
+     *  is detected. Defaults to 0.
 	 * @param args.textdelim {string} The delimiter used to wrap text in
 	 * 	the CSV data. Defaults to nothing (an empty string).
 	 */
 	csvjson.csv2json = function(csvdata, args) {
 		args = args || {};
 		var delim = isdef(args.delim) ? args.delim : ",";
+        var emptyValue = isdef(args.emptyValue) ? args.emptyValue : "0";
+
 		// Unused
 		//var textdelim = isdef(args.textdelim) ? args.textdelim : "";
 
@@ -68,7 +72,12 @@ var csvjson = {};
 
 						// Try to (intelligently) cast the item to a number, if applicable
 						if(!isNaN(item*1)) {
-							item = item*1;
+                            if (item === "") {
+                                item = emptyValue;
+                            }
+                            else {
+                                item = item * 1;
+                            }
 						}
 
 						rowob[csvheaders[i]] = item;
